@@ -1,0 +1,11 @@
+feature
+Type_encoded
+Air temperature [K]
+Process temperature [K]
+Rotational speed [rpm]
+Torque [Nm]
+Tool wear [min]
+Power [W]
+Temp_diff [K]
+Wear_x_Torque
+Temp_power_ratio

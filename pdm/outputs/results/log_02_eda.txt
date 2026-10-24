@@ -1,0 +1,31 @@
+==============================================================================
+STAGE 2 — EXPLORATORY DATA ANALYSIS
+==============================================================================
+
+Plotting 339 failure cycles against 9,661 healthy cycles
+
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig01_failure_profile.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig02_sensor_distributions.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig03_sensor_by_failure.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig04_correlation_heatmap.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig05_failure_by_quality.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig06_torque_speed_envelope.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig07_wear_torque_overstrain.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig08_temp_gap.png
+
+8 figures written to /Users/khush/ISE298/pdm/outputs/figures
+
+Key EDA findings for the report:
+  1. Severe class imbalance (3.39%) — accuracy is a meaningless metric here.
+  2. Heat dissipation + overstrain + power = 87% of all flagged failures.
+  3. No single sensor separates the classes (all |Cohen's d| < 0.8) —
+     which is exactly why a multivariate model is needed.
+  4. Air and process temperature are collinear (r = 0.88) — their
+     DIFFERENCE carries the real signal, not either one alone.
+  5. Failures cluster outside a safe torque-speed power band.
+  6. Overstrain sits above a tool-wear x torque threshold.
+  --> Findings 4, 5 and 6 directly motivate the engineered features in Stage 4.
+
+==============================================================================
+STAGE 2 COMPLETE
+==============================================================================

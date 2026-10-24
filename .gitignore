@@ -1,0 +1,18 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets: never commit keys
+.env
+.streamlit/secrets.toml
+
+# macOS / editors
+.DS_Store
+.vscode/
+
+# Large or regenerated files
+*.zip
+pdm/outputs/models/
+pdm/data/processed/*.npz
+foreman/models/Random_Forest.joblib

@@ -1,0 +1,59 @@
+==============================================================================
+STAGE 7 — MODEL EXPLAINABILITY
+==============================================================================
+
+Explaining: XGBoost
+Test set  : 2,000 cycles x 10 features
+SHAP available: True
+
+[7.1] Global feature importance
+------------------------------------------------------------------------------
+                feature  importance    share  cumulative
+        Tool wear [min]    1.271616 0.220094    0.220094
+ Rotational speed [rpm]    1.100829 0.190533    0.410627
+          Temp_diff [K]    0.676407 0.117074    0.527701
+       Temp_power_ratio    0.649934 0.112492    0.640192
+              Power [W]    0.648179 0.112188    0.752380
+          Wear_x_Torque    0.437263 0.075682    0.828062
+Process temperature [K]    0.263198 0.045555    0.873617
+            Torque [Nm]    0.256530 0.044401    0.918018
+    Air temperature [K]    0.240738 0.041667    0.959685
+           Type_encoded    0.232925 0.040315    1.000000
+
+  Top 3 features explain 52.8% of total importance.
+  The 4 ENGINEERED features account for 41.7% — direct evidence
+  that the Stage 4 feature engineering was worth doing.
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig13_feature_importance.png
+
+[7.2] Direction of effect for the top features
+------------------------------------------------------------------------------
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig14_shap_beeswarm.png
+  Tool wear [min]        high values -> P(fail) 0.192 | low values -> 0.036   (increases risk)
+  Rotational speed [rpm] high values -> P(fail) 0.049 | low values -> 0.191   (decreases risk)
+  Temp_diff [K]          high values -> P(fail) 0.052 | low values -> 0.155   (decreases risk)
+  Temp_power_ratio       high values -> P(fail) 0.046 | low values -> 0.181   (decreases risk)
+
+[7.3] Local explanation — one specific predicted failure
+------------------------------------------------------------------------------
+  Test row 17: actual = FAILURE, predicted P(failure) = 0.880
+
+                feature       value  contribution
+ Rotational speed [rpm] 1363.000000      2.184473
+          Temp_diff [K]    8.400000      1.963377
+              Power [W] 7393.570759     -1.097199
+       Temp_power_ratio    1.136122      1.047878
+Process temperature [K]  312.100000     -1.030758
+        Tool wear [min]   90.000000     -0.611691
+          Wear_x_Torque 4662.000000     -0.604515
+    Air temperature [K]  303.700000      0.331514
+           Type_encoded    0.000000     -0.124905
+            Torque [Nm]   51.800000     -0.077207
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig15_local_explanation.png
+
+  Plain-language alarm text a supervisor would receive:
+    "Machine flagged at 88% failure risk. Main driver:
+     Rotational speed [rpm] at 1,363.0."
+
+==============================================================================
+STAGE 7 COMPLETE — 3 figures written
+==============================================================================

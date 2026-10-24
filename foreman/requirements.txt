@@ -1,0 +1,12 @@
+# Pinned to the versions the models were trained with on the project laptop.
+# Model files are tied to these versions: change them and the models may not load.
+streamlit==1.65.0
+scikit-learn==1.9.1
+xgboost==3.4.1
+shap==0.52.0
+imbalanced-learn==0.14.2
+anthropic==1.11.0
+pandas>=2.2
+numpy>=2.0
+scipy>=1.13
+joblib>=1.4

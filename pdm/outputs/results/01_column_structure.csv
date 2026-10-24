@@ -1,0 +1,15 @@
+,dtype,non_null,nulls,n_unique
+UDI,int64,10000,0,10000
+Product ID,str,10000,0,10000
+Type,str,10000,0,3
+Air temperature [K],float64,10000,0,93
+Process temperature [K],float64,10000,0,82
+Rotational speed [rpm],int64,10000,0,941
+Torque [Nm],float64,10000,0,577
+Tool wear [min],int64,10000,0,246
+Machine failure,int64,10000,0,2
+TWF,int64,10000,0,2
+HDF,int64,10000,0,2
+PWF,int64,10000,0,2
+OSF,int64,10000,0,2
+RNF,int64,10000,0,2

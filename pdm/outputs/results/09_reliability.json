@@ -1,0 +1,168 @@
+{
+  "tools": 120,
+  "tool_outcomes": {
+    "planned change": 73,
+    "failed": 46,
+    "still running": 1
+  },
+  "weibull_beta": 18.41437526549882,
+  "weibull_eta": 232.834312032018,
+  "b10": 206.05023481186163,
+  "mean_life": 226.1830831599009,
+  "replace_age_opt": 179.0,
+  "cost_rate_opt": 8.844596455440284,
+  "cost_rate_observed": 17.224308226230086,
+  "observed_change_age": 215.0,
+  "cost_rate_run_to_failure": 53.054365659683576,
+  "replace_sensitivity": [
+    {
+      "cost_planned": 250,
+      "T_opt": 162.0,
+      "p_fail": 0.0012556668859136089
+    },
+    {
+      "cost_planned": 500,
+      "T_opt": 168.0,
+      "p_fail": 0.0024516354986582334
+    },
+    {
+      "cost_planned": 1500,
+      "T_opt": 179.0,
+      "p_fail": 0.007860988069031682
+    },
+    {
+      "cost_planned": 3000,
+      "T_opt": 188.0,
+      "p_fail": 0.019287783481217735
+    }
+  ],
+  "mission_cycles": 10,
+  "R_system": 0.6886652328439558,
+  "weakest": "Motor housing & cooling",
+  "blocks": [
+    {
+      "mode": "TWF",
+      "component": "Cutting tool",
+      "R": 0.9550419621907147,
+      "lambda": 0.0046
+    },
+    {
+      "mode": "HDF",
+      "component": "Motor housing & cooling",
+      "R": 0.8913661439068313,
+      "lambda": 0.0115
+    },
+    {
+      "mode": "PWF",
+      "component": "Drive system",
+      "R": 0.9093729344682314,
+      "lambda": 0.0095
+    },
+    {
+      "mode": "OSF",
+      "component": "Spindle & bearings",
+      "R": 0.9066489037539209,
+      "lambda": 0.0098
+    },
+    {
+      "mode": "RNF",
+      "component": "Other / random",
+      "R": 0.981179362242806,
+      "lambda": 0.0019
+    }
+  ],
+  "rates": [
+    {
+      "mode": "TWF",
+      "label": "Tool wear failure",
+      "component": "Cutting tool",
+      "failures": 46,
+      "per_1000_cycles": 4.6,
+      "mtbf_cycles": 217.3913043478261
+    },
+    {
+      "mode": "HDF",
+      "label": "Heat dissipation failure",
+      "component": "Motor housing & cooling",
+      "failures": 115,
+      "per_1000_cycles": 11.5,
+      "mtbf_cycles": 86.95652173913044
+    },
+    {
+      "mode": "PWF",
+      "label": "Power failure",
+      "component": "Drive system",
+      "failures": 95,
+      "per_1000_cycles": 9.5,
+      "mtbf_cycles": 105.26315789473684
+    },
+    {
+      "mode": "OSF",
+      "label": "Overstrain failure",
+      "component": "Spindle & bearings",
+      "failures": 98,
+      "per_1000_cycles": 9.8,
+      "mtbf_cycles": 102.04081632653062
+    },
+    {
+      "mode": "RNF",
+      "label": "Random failure",
+      "component": "Other / random",
+      "failures": 19,
+      "per_1000_cycles": 1.9,
+      "mtbf_cycles": 526.3157894736842
+    }
+  ],
+  "co_occurrence": {
+    "TWF": {
+      "TWF": 1.0,
+      "HDF": 0.0,
+      "PWF": 0.011,
+      "OSF": 0.031,
+      "RNF": 0.053
+    },
+    "HDF": {
+      "TWF": 0.0,
+      "HDF": 1.0,
+      "PWF": 0.032,
+      "OSF": 0.061,
+      "RNF": 0.0
+    },
+    "PWF": {
+      "TWF": 0.022,
+      "HDF": 0.026,
+      "PWF": 1.0,
+      "OSF": 0.122,
+      "RNF": 0.0
+    },
+    "OSF": {
+      "TWF": 0.065,
+      "HDF": 0.052,
+      "PWF": 0.126,
+      "OSF": 1.0,
+      "RNF": 0.0
+    },
+    "RNF": {
+      "TWF": 0.022,
+      "HDF": 0.0,
+      "PWF": 0.0,
+      "OSF": 0.0,
+      "RNF": 1.0
+    }
+  },
+  "fail_by_age": {
+    "0": 0.022610483042137718,
+    "20": 0.02176278563656148,
+    "40": 0.017429193899782137,
+    "60": 0.026373626373626374,
+    "80": 0.023333333333333334,
+    "100": 0.02696871628910464,
+    "120": 0.015486725663716814,
+    "140": 0.023076923076923078,
+    "160": 0.022850924918389554,
+    "180": 0.03482045701849837,
+    "200": 0.13484848484848486,
+    "220": 0.23622047244094488,
+    "240": 0.2857142857142857
+  }
+}

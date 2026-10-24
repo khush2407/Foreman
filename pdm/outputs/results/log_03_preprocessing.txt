@@ -1,0 +1,39 @@
+==============================================================================
+STAGE 3 — PREPROCESSING
+==============================================================================
+
+Raw dataset: 10,000 rows x 14 columns
+
+[3.1] Dropping identifier columns: ['UDI', 'Product ID']
+      Reason: row labels carry no physical meaning. 'Product ID' also
+      embeds the Type letter, which would be a second copy of a feature.
+
+[3.2] Dropping failure sub-type columns: ['TWF', 'HDF', 'PWF', 'OSF', 'RNF']
+      Reason: TARGET LEAKAGE. Stage 1 showed Machine failure = OR(these).
+      A model given these columns scores ~100% and learns nothing about
+      the sensors. This is the single most common mistake made with this
+      dataset in published student work.
+
+[3.3] Encoded 'Type' ordinally: {'L': 0, 'M': 1, 'H': 2}
+      Reason: an ordered quality scale, not unordered categories.
+      Stage 1 failure rates: L 3.92%  >  M 2.77%  >  H 2.09%  (monotonic)
+
+[3.4] Feature matrix assembled
+      X: 10,000 rows x 6 features
+      Features: ['Type_encoded', 'Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]']
+      Target:   'Machine failure'  (339 positives, 3.39%)
+
+[3.5] Stratified 80/20 split (random_state=42)
+      Train: 8,000 rows | 271 failures (3.39%)
+      Test:  2,000 rows | 68 failures (3.40%)
+      The two failure rates match, which confirms stratification worked.
+
+      NOTE: the test set is now sealed. It is never scaled using its own
+      statistics and never resampled. It stays a faithful sample of
+      reality so the reported metrics mean something.
+
+[3.6] Saved raw (unscaled) splits to /Users/khush/ISE298/pdm/data/processed
+
+==============================================================================
+STAGE 3 COMPLETE
+==============================================================================

@@ -1,0 +1,150 @@
+{
+  "_about": {
+    "title": "Foreman maintenance knowledge base",
+    "purpose": "Source material the generative assistant retrieves from. The assistant may only restate what appears here; it never invents a threshold or a procedure.",
+    "authorship": "Compiled for ISE 298 by Khush Hemant Patel. Failure thresholds are taken from the AI4I 2020 dataset documentation. Inspection procedures are condensed from published CNC spindle troubleshooting guidance, cited per entry. This is a teaching artefact for a simulated machine, not a manufacturer's service manual.",
+    "version": "1.0"
+  },
+
+  "modes": {
+    "HDF": {
+      "label": "Heat dissipation failure",
+      "component": "Cooling path and motor housing",
+      "plain_summary": "The machine cannot shed heat fast enough. The gap between process temperature and ambient air has closed, so there is nowhere for the heat to go.",
+      "trigger_rule": "Occurs when the process-to-air temperature difference falls below 8.6 K while rotational speed is under 1380 rpm.",
+      "rule_source": "AI4I 2020 dataset documentation (Matzka, 2020)",
+      "leading_indicators": [
+        "Temperature differential narrowing toward 8.6 K",
+        "Sustained operation below 1380 rpm",
+        "Rising process temperature with flat air temperature"
+      ],
+      "inspection": [
+        "Verify the cooling system is running — liquid flow, compressed air, or fan, whichever the spindle uses.",
+        "Check coolant level and inspect lines for leaks or blockages that would restrict circulation.",
+        "Clean air filters and clear any obstruction to airflow around the housing.",
+        "Check spindle current draw during the cut. Elevated draw points to a dull tool or an over-aggressive feed rate rather than a cooling fault.",
+        "Rotate the spindle by hand and listen. Bearing noise means worn bearings are adding friction and generating the heat themselves.",
+        "Review feed and speed against the material specification — excessive cutting load raises thermal stress independently of the cooling system."
+      ],
+      "parts": ["Coolant filter", "Coolant pump", "Air filter", "Spindle bearings", "Temperature sensor"],
+      "safety": "Let the spindle reach ambient temperature before touching the housing or opening the coolant circuit. Lock out the drive first.",
+      "sources": [
+        "PDS Spindle Repair — Troubleshooting CNC Spindles",
+        "Motor City Spindle Repair — Why CNC Spindles Overheat"
+      ]
+    },
+
+    "PWF": {
+      "label": "Power failure",
+      "component": "Drive system and power supply",
+      "plain_summary": "Mechanical power has left the band the drive is rated for. Torque multiplied by rotational speed is either too low to sustain the cut or too high for the drive to deliver safely.",
+      "trigger_rule": "Occurs when mechanical power (torque x angular velocity) falls below 3500 W or rises above 9000 W.",
+      "rule_source": "AI4I 2020 dataset documentation (Matzka, 2020)",
+      "leading_indicators": [
+        "Computed power approaching either 3500 W or 9000 W",
+        "High torque paired with low rotational speed",
+        "Low torque paired with very high rotational speed"
+      ],
+      "inspection": [
+        "Verify torque and rotational-speed sensor calibration before acting on the reading — a power figure is only as good as its two inputs.",
+        "Check that connections at the spindle, the variable frequency drive, and the connectors are clean, tight and secure.",
+        "Confirm the VFD parameter settings match the spindle specification.",
+        "If the spindle jerks on startup, test for single-phasing at the supply.",
+        "If overcurrent faults persist after the above, inspect the motor windings for a short.",
+        "Review the programmed operating setpoint — a power excursion is often a programming choice rather than a fault."
+      ],
+      "parts": ["Variable frequency drive", "Drive coupling", "Drive belt", "Motor windings", "Torque sensor", "Speed encoder"],
+      "safety": "Isolate and lock out the supply before opening the drive enclosure. Confirm zero voltage at the terminals before working.",
+      "sources": [
+        "PDS Spindle Repair — Troubleshooting CNC Spindles"
+      ]
+    },
+
+    "OSF": {
+      "label": "Overstrain failure",
+      "component": "Spindle and bearings",
+      "plain_summary": "The combination of a worn tool and high torque is straining the spindle. Neither reading is alarming alone — it is the product of the two that does the damage.",
+      "trigger_rule": "Occurs when tool wear multiplied by torque exceeds a quality-dependent threshold between 11,000 and 13,000 min-Nm. Low-quality stock fails at the lower end of that band.",
+      "rule_source": "AI4I 2020 dataset documentation (Matzka, 2020)",
+      "leading_indicators": [
+        "Wear x torque product climbing toward 11,000 min-Nm",
+        "High torque sustained on a tool late in its life",
+        "Low-grade (L) stock, which carries the tightest threshold"
+      ],
+      "inspection": [
+        "Check tool condition first — a dull tool raises cutting force and is the cheapest thing on this list to fix.",
+        "Inspect the front spindle bearings. Radial loading from feed rates beyond the material's capacity damages the first front bearing.",
+        "Check for impact damage to the second front bearing, which fails from plunging or crashing into the work surface.",
+        "Verify tool balance and that tool extension does not exceed the recommended length for the operating speed. Unbalanced tooling damages the rear bearing.",
+        "Reduce feed rate or torque setpoint before resuming if the tool is mid-life and otherwise serviceable.",
+        "Confirm the product quality grade being run — the threshold is tighter for L-grade stock."
+      ],
+      "parts": ["Cutting tool", "Front spindle bearings", "Rear spindle bearing", "Collet", "Collet nut"],
+      "safety": "Stop the spindle and lock out before handling tooling. A tool at this strain level may fracture on removal.",
+      "sources": [
+        "PDS Spindle Repair — Troubleshooting CNC Spindles",
+        "Motor City Spindle Repair — Why CNC Spindles Overheat"
+      ]
+    },
+
+    "TWF": {
+      "label": "Tool wear failure",
+      "component": "Cutting tool",
+      "plain_summary": "The tool has reached the end of its usable life. Unlike the other three modes this one has a random element, so it cannot be predicted reliably from a single cycle's readings — it is managed by watching the wear clock instead.",
+      "trigger_rule": "The tool is replaced or fails at a randomly selected wear time between 200 and 240 minutes of use.",
+      "rule_source": "AI4I 2020 dataset documentation (Matzka, 2020)",
+      "predictability_note": "Because the exact failure point is drawn at random within that 40-minute window, a classifier trained on sensor readings recovers this mode poorly. Foreman therefore reports the wear clock directly rather than a model probability for this mode.",
+      "leading_indicators": [
+        "Tool wear above 200 minutes — inside the replacement window",
+        "Tool wear between 180 and 200 minutes — approaching it",
+        "Rising torque at constant feed, which indicates a dulling edge"
+      ],
+      "inspection": [
+        "Read the tool wear counter. Above 200 minutes the tool is inside its replacement window regardless of how it looks.",
+        "Inspect the cutting edge for flank wear, cratering, chipping or built-up edge.",
+        "Check whether torque has drifted upward at a constant feed rate, which indicates the edge is dulling.",
+        "Check surface finish on the last part produced — degradation is a late but reliable sign.",
+        "Replace the tool and reset the wear counter. Verify balance and extension length on the replacement before running."
+      ],
+      "parts": ["Cutting tool", "Insert", "Collet"],
+      "safety": "Lock out the spindle before changing tooling. Handle worn edges with gloves — chipped carbide is sharp and brittle.",
+      "sources": [
+        "PDS Spindle Repair — Troubleshooting CNC Spindles",
+        "General machining practice on tool-life monitoring"
+      ]
+    }
+  },
+
+  "policy": {
+    "_source": "Thresholds derived from the cost analysis in this project: a missed failure is priced at $12,000, a planned intervention at $1,500 and a false alarm at $400. The cost-optimal alarm threshold under those figures is 0.42.",
+    "tiers": [
+      {
+        "name": "Continue",
+        "max_risk": 0.15,
+        "action": "No action. Continue running and re-score on the next cycle.",
+        "urgency": "none"
+      },
+      {
+        "name": "Inspect at changeover",
+        "max_risk": 0.42,
+        "action": "Flag for inspection at the next planned changeover. Do not interrupt the current run.",
+        "urgency": "low"
+      },
+      {
+        "name": "Intervene this shift",
+        "max_risk": 1.01,
+        "action": "Schedule intervention within the current shift. Above this risk level the expected cost of a missed failure exceeds the cost of stopping.",
+        "urgency": "high"
+      }
+    ]
+  },
+
+  "operating_envelope": {
+    "_source": "AI4I 2020 dataset documentation (Matzka, 2020)",
+    "power_w": {"min": 3500, "max": 9000},
+    "temp_diff_k": {"min": 8.6},
+    "speed_rpm_heat_risk_below": 1380,
+    "wear_torque_min_nm": {"warn": 11000, "max": 13000},
+    "tool_wear_min": {"warn": 180, "replace": 200, "max": 240}
+  }
+}

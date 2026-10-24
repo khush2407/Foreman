@@ -1,0 +1,10 @@
+strategy,cost,detail,annual_cost,vs_reactive,pct_saved
+"Reactive
+(run to failure)",816000.0,"all 68 failures
+unplanned",4080000.0,0.0,0.0
+"Scheduled preventive
+(best interval: 2% of cycles)",817176.0,"40 inspections
+66 still unplanned",4085880.0,-5880.0,-0.0014411764705882352
+"Predictive ML
+(threshold 0.42)",194200.0,"62 caught · 6 missed
+73 false alarms",971000.0,3109000.0,0.7620098039215686

@@ -1,0 +1,47 @@
+==============================================================================
+STAGE 4 — FEATURE ENGINEERING, SCALING, BALANCING
+==============================================================================
+
+[4.1] Engineered 4 new features
+      Feature count: 6 -> 10
+
+      Correlation with the target (training set):
+      ----------------------------------------------------
+      Torque [Nm]                  0.1900
+      Wear_x_Torque                0.1858  <- engineered
+      Power [W]                    0.1760  <- engineered
+      Temp_diff [K]                0.1113  <- engineered
+      Tool wear [min]              0.0992
+      Air temperature [K]          0.0860
+      Temp_power_ratio             0.0802  <- engineered
+      Type_encoded                 0.0456
+      Process temperature [K]      0.0408
+      Rotational speed [rpm]       0.0400
+
+      Strongest engineered feature: Wear_x_Torque (0.1858)
+      Strongest original feature:   Torque [Nm] (0.1900)
+
+[4.2] StandardScaler fitted on TRAIN ONLY, applied to both
+      Train mean after scaling: +1.22e-15  (~0 as expected)
+      Train std  after scaling: 1.0000   (~1 as expected)
+      Test  mean after scaling: +0.0046  (NOT exactly 0 — correct, it used the training mean)
+      Scaling matters for Logistic Regression and SVM, which are
+      distance/geometry based. Trees are scale-invariant but are given
+      the same matrix so every model sees identical inputs.
+
+[4.3] SMOTE applied to the TRAINING SET ONLY  [imbalanced-learn]
+      Before:  8,000 rows |   271 failures (3.39%)
+      After:   15,458 rows |  7729 failures (50.00%)
+      Synthetic samples created: 7,458
+
+      The TEST set is untouched: 2,000 rows, 68 failures (3.40%)
+      This is the whole point — the model trains on a balanced world
+      but is scored on the real, imbalanced one.
+
+[4.4] Saved to /Users/khush/ISE298/pdm/data/processed
+      model_data.npz  — balanced train, scaled train, scaled test
+      scaler.joblib   — needed to score new data in production
+
+==============================================================================
+STAGE 4 COMPLETE
+==============================================================================

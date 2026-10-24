@@ -1,0 +1,68 @@
+==============================================================================
+STAGE 8 — BUSINESS IMPACT
+==============================================================================
+
+Model      : XGBoost
+Test sample: 2,000 cycles containing 68 real failures
+Annualised : 10,000 cycles/year  (scale factor 5x)
+
+Cost model : FN $12,000 | TP $1,500 | FP $400 | TN $0
+
+[8.1] Sweeping the alarm threshold from 0.01 to 0.99
+------------------------------------------------------------------------------
+  Default threshold 0.50
+    caught 59/68 failures, missed 9, 55 false alarms
+    cost $218,500 per 2,000 cycles  -> $1,092,500/year
+
+  OPTIMAL threshold 0.42
+    caught 62/68 failures, missed 6, 73 false alarms
+    cost $194,200 per 2,000 cycles  -> $971,000/year
+
+  Lowering the threshold from 0.50 to 0.42 trades +18 false alarms
+  for +3 additional failures caught, saving $121,500/year.
+  Recall rises 86.8% -> 91.2%.
+
+[8.2] Comparing three maintenance strategies
+------------------------------------------------------------------------------
+  Best calendar-based interval found: inspect 2% of cycles (every 50.0th)
+  Reactive (run to failure)                          $  4,080,000/yr   (all 68 failures, unplanned)
+  Scheduled preventive (best interval: 2% of cycles) $  4,085,880/yr   (40 inspections, 66 still unplanned)
+  Predictive ML (threshold 0.42)                     $    971,000/yr   (62 caught · 6 missed, 73 false alarms)
+
+  Predictive vs reactive   : $3,109,000/year saved (76.2%)
+  Predictive vs preventive : $3,114,880/year saved (76.2%)
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig16_cost_vs_threshold.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig17_strategy_comparison.png
+
+[8.3] Sensitivity — does the conclusion survive different cost ratios?
+------------------------------------------------------------------------------
+     FN cost   ratio  opt thresh   recall   annual cost  saved vs reactive
+  $    4,000     10x        0.83    80.9% $     684,500 $          675,500
+  $    8,000     20x        0.42    91.2% $     851,000 $        1,869,000
+  $   12,000     30x        0.42    91.2% $     971,000 $        3,109,000
+  $   20,000     50x        0.42    91.2% $   1,211,000 $        5,589,000
+  $   40,000    100x        0.09    95.6% $   1,511,500 $       12,088,500
+
+  The optimal threshold falls as misses get more expensive, and the
+  predictive strategy beats reactive maintenance across the whole range.
+  The conclusion is robust to the cost assumption, which is the point of
+  running this sensitivity at all.
+
+[8.4] RECOMMENDED OPERATING POLICY
+------------------------------------------------------------------------------
+  Tier 1  P(failure) < 0.15        -> no action, continue running
+  Tier 2  0.15 <= P < 0.42   -> flag for inspection at next planned changeover
+  Tier 3  P(failure) >= 0.42      -> schedule intervention within the current shift
+
+  Every alarm ships with the Figure 15 reason breakdown, so the
+  supervisor sees WHICH reading triggered it, not just a number.
+
+  Expected result at 10,000 cycles/year:
+    310 failures caught before they happen
+    30 still escape to unplanned downtime
+    365 inspections that find nothing
+    $3,109,000 net annual saving vs run-to-failure
+
+==============================================================================
+STAGE 8 COMPLETE — 2 figures written
+==============================================================================

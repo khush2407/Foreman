@@ -1,0 +1,6 @@
+,description,count,pct_of_all_rows,pct_of_failures
+0,Tool Wear Failure,46,0.46,13.6
+1,Heat Dissipation Failure,115,1.15,33.9
+2,Power Failure,95,0.95,28.0
+3,Overstrain Failure,98,0.98,28.9
+4,Random Failure,19,0.19,5.6

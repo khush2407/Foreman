@@ -1,0 +1,7 @@
+Model: XGBoost
+Optimal threshold: 0.42
+Recall at optimum: 0.9118
+Precision at optimum: 0.4593
+Annual cost (predictive): $971,000
+Annual cost (reactive): $4,080,000
+Annual saving: $3,109,000

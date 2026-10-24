@@ -1,0 +1,51 @@
+==============================================================================
+STAGE 6 — MODEL EVALUATION
+==============================================================================
+
+Test set: 2,000 cycles | 68 real failures (3.40%)
+Models evaluated: Logistic Regression, Random Forest, XGBoost, SVM (RBF)
+
+[6.1] Test-set performance at the default 0.50 threshold
+------------------------------------------------------------------------------
+              Model Accuracy Precision Recall     F1 ROC-AUC PR-AUC  TP  FP  FN   TN
+            XGBoost   0.9680    0.5175 0.8676 0.6484  0.9787 0.8733  59  55   9 1877
+      Random Forest   0.9765    0.6180 0.8088 0.7006  0.9759 0.8551  55  34  13 1898
+          SVM (RBF)   0.9310    0.3177 0.8971 0.4692  0.9748 0.6637  61 131   7 1801
+Logistic Regression   0.8690    0.1891 0.8676 0.3105  0.9434 0.4692  59 253   9 1679
+
+  Winner by PR-AUC: XGBoost
+
+  Reference point — a model that always predicts 'no failure':
+    Accuracy 0.9660  |  Recall 0.0000  |  failures caught: 0 of 68
+    It beats Logistic Regression on accuracy. That is why accuracy is
+    not the selection metric in this study.
+
+[6.2] Full classification report — XGBoost
+------------------------------------------------------------------------------
+              precision    recall  f1-score   support
+
+  No failure     0.9952    0.9715    0.9832      1932
+     Failure     0.5175    0.8676    0.6484        68
+
+    accuracy                         0.9680      2000
+   macro avg     0.7564    0.9196    0.8158      2000
+weighted avg     0.9790    0.9680    0.9719      2000
+
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig09_confusion_matrices.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig10_roc_curves.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig11_pr_curves.png
+    saved  /Users/khush/ISE298/pdm/outputs/figures/fig12_model_comparison.png
+
+[6.3] Interpretation for the report
+------------------------------------------------------------------------------
+  XGBoost caught 59 of 68 real failures (86.8% recall)
+  and raised 55 false alarms out of 1,932 healthy cycles (51.8% precision).
+  It missed 9 failures — Stage 8 prices that miss in dollars
+  and shows the threshold can be moved to trade alarms for catches.
+
+  Note the ROC-AUC / PR-AUC gap: 0.979 vs 0.873.
+  Reporting only ROC-AUC would have overstated this model substantially.
+
+==============================================================================
+STAGE 6 COMPLETE — 4 figures written
+==============================================================================

@@ -1,0 +1,4 @@
+,count,share,failures,failure_rate
+L (Low),6000,0.6,235,0.0392
+M (Medium),2997,0.2997,83,0.0277
+H (High),1003,0.1003,21,0.0209
