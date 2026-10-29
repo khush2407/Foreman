@@ -164,6 +164,11 @@ if actual.sum():
     check("failures score higher than healthy rows", mean_fail > mean_ok,
           f"{mean_fail:.2f} vs {mean_ok:.2f}")
 
+from foreman.engine import score_many
+fast = score_many(sample)
+check("fast batch scoring matches one-by-one scoring",
+      np.abs(fast["risk"].to_numpy() - np.array(risks)).max() < 1e-9)
+
 # ── fixes from the first live run ─────────────────────────────────────────
 print("\n[12] Example cases (typical rows, not edge cases)")
 CASES = example_cases()
@@ -220,7 +225,7 @@ check("prompt carries units",
 from foreman.assistant import to_html
 h = to_html(wo["text"])
 check("work order HTML is one physical line (markdown can't touch it)", "\n" not in h)
-check("headings become heading rows", h.count('class="fm-wo-h"') == 5,
+check("headings become heading rows", h.count('class="fm-wo-h"') == 6,
       h.count('class="fm-wo-h"'))
 check("every line survives", h.count("<div") - 1 == len(wo["text"].splitlines()))
 check("text is escaped", "<b>" not in to_html("Torque <b>x</b>"))
@@ -258,7 +263,47 @@ check("series system is less reliable than its weakest block",
 co = rel.co_occurrence(df)
 check("dependency matrix has 1.0 on the diagonal", all(abs(co.loc[m, m] - 1) < 1e-9 for m in rel.MODES))
 
-print("\n[18] App module")
+print("\n[18] Root cause, demand scenarios, spare parts, production line")
+from foreman import plant
+raw = plant.prepare(pd.read_csv("data/ai4i2020.csv"))
+fp = plant.failure_probabilities(raw, beta, eta)
+check("power rule reproduces every PWF label", ((fp["PWF"] > .5) == (raw["PWF"] == 1)).all())
+check("overstrain rule reproduces every OSF label", ((fp["OSF"] > .5) == (raw["OSF"] == 1)).all())
+check("heat rule reproduces 99.8%+ of HDF labels",
+      ((fp["HDF"].round() == raw["HDF"]).mean()) > .998)
+par = plant.root_cause_pareto(raw)
+check("every recorded failure flag gets a root cause", int(par["failures"].sum()) == int(raw[rel.MODES].sum().sum()))
+check("slow spindle with a small gap is the top cause", par.loc[0, "cause"] == "cooling")
+for name, key in [("Heat dissipation failure", "cooling"), ("Power failure", "power_high"),
+                  ("Overstrain failure", "worn_tool"), ("Worn tool, still running", "tool_life")]:
+    check(f"{name}: root cause is {key}", key in [c["key"] for c in predict(CASES[name])["root_causes"]])
+check("healthy cycle has no root cause", predict(CASES["Healthy cycle"])["root_causes"] == [])
+check("work order carries a ROOT CAUSE section", "ROOT CAUSE" in write_work_order(po, use_llm=False)["text"]
+      and "## Root cause" in build_prompt(po, ret, fixes))
+train_raw = A["train"][plant.BASE]
+check("today's data is stable against the training data",
+      plant.drift_report(train_raw, raw).psi.max() < 0.1)
+hot = plant.apply_scenario(raw, load_pct=20, ambient_k=3, gap_k=-1)
+check("load +20% in a hotter shop is flagged as a major shift",
+      plant.drift_report(train_raw, hot).psi.max() >= 0.25)
+today = plant.scenario_summary(raw, score_many(raw)["risk"].to_numpy(), beta, eta)
+more = plant.scenario_summary(plant.apply_scenario(raw, load_pct=20),
+                              score_many(plant.apply_scenario(raw, load_pct=20))["risk"].to_numpy(), beta, eta)
+check("more load means more failures", more["failures"] > today["failures"],
+      f"{today['failures']:.0f} → {more['failures']:.0f}")
+check("predictive maintenance costs less than running to failure", today["predictive_cost"] < today["reactive_cost"])
+sp = plant.spare_parts(today["by_mode"], 145)
+check("spare parts get A, B and C classes", set(sp["class"]) == {"A", "B", "C"})
+check("A class is a few parts carrying most of the spend",
+      (sp["class"] == "A").sum() <= 6 and sp.loc[sp["class"] == "A", "share"].sum() >= .8)
+st_ = plant.station_profiles(raw, beta, eta)
+r0 = plant.simulate_line(st_, minutes=1200, reps=2)
+check("simulated bottleneck is the roughing station", r0["bottleneck"] == "1 Roughing", r0["bottleneck"])
+r1 = plant.simulate_line(st_, minutes=1200, reps=2, standby="1 Roughing")
+check("a standby machine at the bottleneck raises output", r1["throughput"] > r0["throughput"],
+      f"{r0['throughput']:.1f} → {r1['throughput']:.1f} parts/h")
+
+print("\n[19] App module")
 import ast
 src_app = open("app.py").read()
 try:
@@ -269,6 +314,10 @@ except SyntaxError as e:
 check("app lays the work order out line by line", "to_html(wo" in src_app)
 check("switching example resets the sliders", "on_change=load_case" in src_app)
 check("app has a Reliability tab", "tab_rel" in src_app and "rel.block_diagram" in src_app)
+check("app shows the root cause", "root_causes" in src_app)
+check("app scores a shift in one pass", "score_many(" in src_app and "drift_report(" in src_app)
+check("app has Demand & spares and Production line tabs",
+      "tab_dem" in src_app and "spare_parts(" in src_app and "tab_line" in src_app and "simulate_line(" in src_app)
 check("app calls every layer",
       all(s in src_app for s in ("predict(", "write_work_order(",
                                  "schematic.render(", "what_if(", "retrieve")))

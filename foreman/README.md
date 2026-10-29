@@ -96,17 +96,19 @@ a meaningless score.
 
 ```
 foreman/
-├── app.py                  Streamlit UI — four tabs
+├── app.py                  Streamlit UI — six tabs
 ├── train_modes.py          Trains the four mode classifiers
 ├── test_headless.py        Full test suite, no browser needed
 ├── data/ai4i2020.csv       The dataset
 ├── kb/kb.json              Maintenance knowledge base
 ├── models/                 Trained models, scaler, feature names
 └── foreman/
-    ├── engine.py           Prediction, attribution, what-if, fix search
+    ├── engine.py           Prediction, attribution, root cause, what-if, fix search
     ├── knowledge.py        Retrieval from the knowledge base
     ├── assistant.py        Claude prompt + deterministic fallback writer
-    └── schematic.py        Machine diagram with the at-risk part marked
+    ├── schematic.py        Machine diagram with the at-risk part marked
+    ├── reliability.py      Tool life, block diagram, failure dependencies
+    └── plant.py            Demand scenarios, drift, spare parts, line simulation
 ```
 
 ---

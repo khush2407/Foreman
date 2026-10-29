@@ -33,6 +33,7 @@ Run time is about 2–3 minutes end to end.
 | `07_shap_analysis.py` | Explainability | Figures 13–15 | Results |
 | `08_business_impact.py` | Cost model, policy | Figures 16–17 | Discussion |
 | `09_reliability.py` | Tool life (Kaplan-Meier, Weibull), best tool-change age, reliability block diagram, failure dependencies | Figures 18–22 | Results, Discussion |
+| `10_plant_analysis.py` | Root cause of each alarm (fishbone, Pareto), demand and usage scenarios with a drift check, critical spare parts (ABC), production line simulation with bottleneck and backup plans | Figures 23–29 | Results, Discussion |
 
 Scripts are numbered because each depends on the previous one's saved output.
 Run them in order the first time; after that any script can be re-run alone.

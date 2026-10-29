@@ -8,8 +8,8 @@ Predicts machine failure from six sensor readings, explains which reading caused
 
 | Folder | What it is |
 |---|---|
-| `pdm/` | The analysis pipeline: 9 stages from data understanding to reliability. `bash run_all.sh` runs everything and writes figures and tables to `pdm/outputs/`. |
-| `foreman/` | **Foreman**, the web app: Single cycle, Score a shift, Reliability, How it works. |
+| `pdm/` | The analysis pipeline: 10 stages from data understanding to reliability, root cause, spare parts and the production line. `bash run_all.sh` runs everything and writes figures and tables to `pdm/outputs/`. |
+| `foreman/` | **Foreman**, the web app: Single cycle, Score a shift, Reliability, Demand & spares, Production line, How it works. |
 
 ## Results (AI4I 2020, 10,000 cycles)
 

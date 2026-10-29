@@ -217,19 +217,84 @@ def predict(row: dict) -> dict:
                   else "ok")
 
     tier = tier_for(risk, A["kb"])
+    flags = envelope_flags(full, env)
+    mode = top_mode if top_p >= .5 else None
 
     return {
         "readings": full,
         "risk": risk,
         "tier": tier,
         "modes": modes,
-        "top_mode": top_mode if top_p >= .5 else None,
+        "top_mode": mode,
         "top_mode_p": top_p,
         "wear_state": wear_state,
         "wear_minutes": wear,
         "factors": attribute(row),
-        "envelope_flags": envelope_flags(full, env),
+        "envelope_flags": flags,
+        "root_causes": root_cause(full, flags, mode),
     }
+
+
+def root_cause_keys(full: dict, flags: list[dict], top_mode: str | None) -> list[str]:
+    """Which root causes explain this cycle. Each broken limit points to
+    one cause; with no limit broken, the predicted mode decides."""
+    from .plant import root_cause_of
+    keys = []
+    for f in flags:
+        w = f["what"]
+        if w == "Mechanical power":
+            keys.append("power_high" if f["state"] == "above" else "power_low")
+        elif w == "Temperature differential":
+            keys.append("cooling")
+        elif w == "Wear x torque":
+            keys.append(root_cause_of(full, "OSF"))
+        elif w == "Tool wear":
+            keys.append("tool_life")
+    if not keys and top_mode:
+        keys.append(root_cause_of(full, top_mode))
+    return list(dict.fromkeys(keys))
+
+
+def root_cause(full: dict, flags: list[dict], top_mode: str | None) -> list[dict]:
+    """Root cause of the alarm, split into an operating setting that should
+    have adapted or a component that has worn. Empty when nothing is wrong."""
+    from .plant import CAUSES, ADAPT
+    out = []
+    for k in root_cause_keys(full, flags, top_mode):
+        cat, kind, text = CAUSES[k]
+        out.append({"key": k, "category": cat, "kind": kind, "text": text, "adapt": ADAPT[k]})
+    return out
+
+
+def score_many(df: pd.DataFrame) -> pd.DataFrame:
+    """Score many cycles at once. Same model and same rules as predict(),
+    but vectorised and without per-row attribution, so a full shift or the
+    whole 10,000-cycle dataset scores in about a second."""
+    A = load()
+    env = A["kb"]["operating_envelope"]
+    d = df[BASE_FEATURES].astype(float).reset_index(drop=True)
+    d["Power [W]"] = d["Torque [Nm]"] * d["Rotational speed [rpm]"] * 2 * np.pi / 60
+    d["Temp_diff [K]"] = d["Process temperature [K]"] - d["Air temperature [K]"]
+    d["Wear_x_Torque"] = d["Tool wear [min]"] * d["Torque [Nm]"]
+    d["Temp_power_ratio"] = np.where(d["Power [W]"] != 0,
+                                     d["Temp_diff [K]"] / (d["Power [W]"] / 1000), 0.0)
+    risk = A["binary"].predict_proba(A["scaler"].transform(d[A["features"]]))[:, 1]
+    probs = {}
+    for code in PREDICTABLE_MODES:
+        m = A["modes"][code]
+        probs[code] = m["model"].predict_proba(m["scaler"].transform(d[A["mode_features"]]))[:, 1]
+    P = pd.DataFrame(probs)
+    top = P.idxmax(axis=1).where(P.max(axis=1) >= .5)
+    out = d.copy()
+    out["risk"] = risk
+    out["tier"] = [tier_for(r, A["kb"])["name"] for r in risk]
+    out["top_mode"] = top
+    causes = []
+    for rec, tm in zip(d.to_dict("records"), top):
+        flags = envelope_flags(rec, env)
+        causes.append(", ".join(root_cause_keys(rec, flags, tm if isinstance(tm, str) else None)))
+    out["root_cause"] = causes
+    return out
 
 
 def envelope_flags(full: dict, env: dict) -> list[dict]:

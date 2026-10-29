@@ -41,6 +41,9 @@ the passages verbatim.
 - Write for a technician on the floor, not an engineer at a desk. Short \
 sentences. Plain words. No preamble, no restating the question.
 - Keep the section headings you are given, in order.
+- Under ROOT CAUSE, use the root cause given. Say plainly whether it is \
+an operating setting that should have been changed or a part that has \
+worn, and what should have adapted.
 - If the evidence is thin or the readings are all within limits, say so \
 plainly rather than manufacturing urgency.
 - Write as a foreman talking to a technician. Never mention the \
@@ -93,6 +96,14 @@ def build_prompt(prediction: dict, retrieved: dict, fixes: list) -> str:
     else:
         lines += ["", "## Outside documented limits", "  none"]
 
+    lines += ["", "## Root cause"]
+    if prediction.get("root_causes"):
+        for c in prediction["root_causes"]:
+            lines.append(f"  {c['kind']} ({c['category']}): {c['text']}")
+            lines.append(f"    What should adapt: {c['adapt']}")
+    else:
+        lines.append("  none: every reading is inside its documented limits")
+
     lines += ["", "## What drove the prediction"]
     for f in prediction["factors"][:4]:
         lines.append(f"  {f['name']} = {_fmt(f['value'], f['unit'])} "
@@ -109,7 +120,7 @@ def build_prompt(prediction: dict, retrieved: dict, fixes: list) -> str:
               as_source_text(retrieved)]
 
     lines += ["", "", "Write the work order with these headings, in order:",
-              "STATUS / WHY / WHAT TO DO / WHAT WOULD CLEAR IT / SAFETY",
+              "STATUS / WHY / ROOT CAUSE / WHAT TO DO / WHAT WOULD CLEAR IT / SAFETY",
               "Plain text only, no markdown.",
               "Under WHAT TO DO, cite the knowledge base entry code in brackets."]
     return "\n".join(lines)
@@ -141,6 +152,14 @@ def _template_work_order(prediction: dict, retrieved: dict, fixes: list) -> str:
     top = prediction["factors"][0]
     out.append(f"  Largest contributor: {top['name']} at "
                f"{_fmt(top['value'], top['unit'])} ({top['direction']}).")
+
+    out += ["", "ROOT CAUSE"]
+    if prediction.get("root_causes"):
+        for c in prediction["root_causes"]:
+            out.append(f"  {c['kind']}: {c['text']}.")
+            out.append(f"  {c['adapt']}")
+    else:
+        out.append("  None found. Every reading is inside its documented limits.")
 
     out += ["", "WHAT TO DO"]
     if primary:

@@ -16,6 +16,7 @@ STAGES=(
   "07_shap_analysis"
   "08_business_impact"
   "09_reliability"
+  "10_plant_analysis"
 )
 
 for s in "${STAGES[@]}"; do

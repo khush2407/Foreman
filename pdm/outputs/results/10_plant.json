@@ -1,0 +1,419 @@
+{
+  "root_cause": [
+    {
+      "cause": "cooling",
+      "failures": 115,
+      "text": "Spindle run too slowly (under 1,380 rpm) while the temperature gap is small, so heat is not carried away",
+      "kind": "Operating setting",
+      "share": 0.30831099195710454,
+      "cumulative": 0.30831099195710454
+    },
+    {
+      "cause": "worn_tool",
+      "failures": 95,
+      "text": "Worn tool under load: wear \u00d7 torque past the grade's limit with the tool near end of life",
+      "kind": "Component condition",
+      "share": 0.2546916890080429,
+      "cumulative": 0.5630026809651474
+    },
+    {
+      "cause": "power_high",
+      "failures": 64,
+      "text": "Load too high for the speed: torque \u00d7 speed above the drive's 9,000 W band",
+      "kind": "Operating setting",
+      "share": 0.17158176943699732,
+      "cumulative": 0.7345844504021447
+    },
+    {
+      "cause": "tool_life",
+      "failures": 46,
+      "text": "Tool kept past its replacement age (200\u2013240 min window)",
+      "kind": "Component condition",
+      "share": 0.12332439678284182,
+      "cumulative": 0.8579088471849865
+    },
+    {
+      "cause": "power_low",
+      "failures": 31,
+      "text": "Load too light for the drive: power below 3,500 W at very high speed",
+      "kind": "Operating setting",
+      "share": 0.08310991957104558,
+      "cumulative": 0.9410187667560321
+    },
+    {
+      "cause": "random",
+      "failures": 19,
+      "text": "Random failure, independent of every reading",
+      "kind": "No identifiable cause",
+      "share": 0.05093833780160858,
+      "cumulative": 0.9919571045576407
+    },
+    {
+      "cause": "overload",
+      "failures": 3,
+      "text": "Torque set too high for the product grade: wear \u00d7 torque past the limit on a tool that is not yet worn",
+      "kind": "Operating setting",
+      "share": 0.00804289544235925,
+      "cumulative": 1.0
+    }
+  ],
+  "by_kind": {
+    "Component condition": 141,
+    "No identifiable cause": 19,
+    "Operating setting": 213
+  },
+  "scenarios": [
+    {
+      "scenario": "Today",
+      "failures": 333.6097709621091,
+      "caught": 299.68918741516217,
+      "missed": 33.92058354694694,
+      "false_alarms": 341.31081258483783,
+      "recall": 0.8983225717606467,
+      "reactive_cost": 4003317.251545309,
+      "predictive_cost": 993105.1087200417,
+      "saving": 3010212.1428252673,
+      "fail_TWF": 42.78464900279944,
+      "fail_HDF": 115.0,
+      "fail_PWF": 95.0,
+      "fail_OSF": 98.0,
+      "fail_RNF": 10.000000000000002,
+      "max_psi": 0.0005168640503890451,
+      "verdict": "Stable"
+    },
+    {
+      "scenario": "Load +10%",
+      "failures": 669.3366658256798,
+      "caught": 635.854236845704,
+      "missed": 33.48242897997579,
+      "false_alarms": 312.14576315429593,
+      "recall": 0.9499766997842968,
+      "reactive_cost": 8032039.989908158,
+      "predictive_cost": 1480428.808289984,
+      "saving": 6551611.181618174,
+      "fail_TWF": 42.78464900279944,
+      "fail_HDF": 115.0,
+      "fail_PWF": 390.0,
+      "fail_OSF": 218.0,
+      "fail_RNF": 10.000000000000002,
+      "max_psi": 0.14792199708572087,
+      "verdict": "Moderate shift"
+    },
+    {
+      "scenario": "Load +20%",
+      "failures": 1564.301915163448,
+      "caught": 1532.0200821061696,
+      "missed": 32.28183305727839,
+      "false_alarms": 263.97991789383036,
+      "recall": 0.9793634254715431,
+      "reactive_cost": 18771622.981961377,
+      "predictive_cost": 2791004.087004127,
+      "saving": 15980618.89495725,
+      "fail_TWF": 42.78464900279944,
+      "fail_HDF": 115.0,
+      "fail_PWF": 1246.0,
+      "fail_OSF": 464.0,
+      "fail_RNF": 10.000000000000002,
+      "max_psi": 0.5114097776244426,
+      "verdict": "Major shift"
+    },
+    {
+      "scenario": "Speed +10%",
+      "failures": 488.28920963856456,
+      "caught": 436.62861144561214,
+      "missed": 51.66059819295242,
+      "false_alarms": 133.37138855438792,
+      "recall": 0.8942008195692221,
+      "reactive_cost": 5859470.515662774,
+      "predictive_cost": 1328218.6509056024,
+      "saving": 4531251.864757172,
+      "fail_TWF": 42.78464900279944,
+      "fail_HDF": 3.0,
+      "fail_PWF": 390.0,
+      "fail_OSF": 98.0,
+      "fail_RNF": 10.000000000000002,
+      "max_psi": 1.2073771092073986,
+      "verdict": "Major shift"
+    },
+    {
+      "scenario": "More L grade (80/15/5)",
+      "failures": 333.16844847528125,
+      "caught": 300.4471365568844,
+      "missed": 32.72131191839685,
+      "false_alarms": 353.5528634431156,
+      "recall": 0.9017874829740231,
+      "reactive_cost": 3998021.381703375,
+      "predictive_cost": 984747.5932333351,
+      "saving": 3013273.78847004,
+      "fail_TWF": 39.552350540948915,
+      "fail_HDF": 115.0,
+      "fail_PWF": 95.0,
+      "fail_OSF": 102.0,
+      "fail_RNF": 10.000000000000002,
+      "max_psi": 0.19976944726427764,
+      "verdict": "Moderate shift"
+    },
+    {
+      "scenario": "Hotter shop (air +3 K, gap \u22121 K)",
+      "failures": 735.3956359546148,
+      "caught": 697.0798692283706,
+      "missed": 38.31576672624419,
+      "false_alarms": 463.92013077162926,
+      "recall": 0.9478977507440514,
+      "reactive_cost": 8824747.631455379,
+      "predictive_cost": 1690977.0568661378,
+      "saving": 7133770.574589241,
+      "fail_TWF": 42.78464900279944,
+      "fail_HDF": 555.7777777777777,
+      "fail_PWF": 95.0,
+      "fail_OSF": 98.0,
+      "fail_RNF": 10.000000000000002,
+      "max_psi": 2.7148076643471355,
+      "verdict": "Major shift"
+    },
+    {
+      "scenario": "Load +20% with tool change 179 min",
+      "failures": 1324.0107187958683,
+      "caught": 1308.8393093417421,
+      "missed": 15.171409454126206,
+      "false_alarms": 147.1606906582577,
+      "recall": 0.9885413242968879,
+      "reactive_cost": 15888128.625550421,
+      "predictive_cost": 2204180.153725431,
+      "saving": 13683948.47182499,
+      "fail_TWF": 0.7590868015264884,
+      "fail_HDF": 115.0,
+      "fail_PWF": 1246.0,
+      "fail_OSF": 60.0,
+      "fail_RNF": 10.000000000000002,
+      "max_psi": 0.9189562640276282,
+      "verdict": "Major shift"
+    }
+  ],
+  "drift_example": [
+    {
+      "reading": "Type_encoded",
+      "psi": 6.598950977783811e-05,
+      "state": "stable"
+    },
+    {
+      "reading": "Air temperature [K]",
+      "psi": 2.7148076643471355,
+      "state": "major shift"
+    },
+    {
+      "reading": "Process temperature [K]",
+      "psi": 1.7853855927911082,
+      "state": "major shift"
+    },
+    {
+      "reading": "Rotational speed [rpm]",
+      "psi": 0.00017970506206318052,
+      "state": "stable"
+    },
+    {
+      "reading": "Torque [Nm]",
+      "psi": 0.5114097776244426,
+      "state": "major shift"
+    },
+    {
+      "reading": "Tool wear [min]",
+      "psi": 0.0005168640503890451,
+      "state": "stable"
+    }
+  ],
+  "spare_parts": [
+    {
+      "part": "Spindle bearing set",
+      "unit_cost": 1800,
+      "lead_days": 30,
+      "annual_qty": 72.0,
+      "annual_value": 129600.0,
+      "reorder_point": 10,
+      "safety_stock": 4.082191780821918,
+      "share": 0.4251440283353466,
+      "cumulative": 0.4251440283353466,
+      "class": "A"
+    },
+    {
+      "part": "Variable frequency drive",
+      "unit_cost": 2400,
+      "lead_days": 45,
+      "annual_qty": 23.75,
+      "annual_value": 57000.0,
+      "reorder_point": 6,
+      "safety_stock": 3.0719178082191783,
+      "share": 0.18698464209193486,
+      "cumulative": 0.6121286704272815,
+      "class": "A"
+    },
+    {
+      "part": "Motor rewind",
+      "unit_cost": 3200,
+      "lead_days": 30,
+      "annual_qty": 9.5,
+      "annual_value": 30400.0,
+      "reorder_point": 2,
+      "safety_stock": 1.2191780821917808,
+      "share": 0.09972514244903191,
+      "cumulative": 0.7118538128763134,
+      "class": "A"
+    },
+    {
+      "part": "Cutting tool insert set",
+      "unit_cost": 85,
+      "lead_days": 7,
+      "annual_qty": 286.06956520391674,
+      "annual_value": 24315.913042332922,
+      "reorder_point": 10,
+      "safety_stock": 4.513734365952281,
+      "share": 0.0797667069712146,
+      "cumulative": 0.791620519847528,
+      "class": "A"
+    },
+    {
+      "part": "Coolant pump",
+      "unit_cost": 650,
+      "lead_days": 21,
+      "annual_qty": 34.5,
+      "annual_value": 22425.0,
+      "reorder_point": 5,
+      "safety_stock": 3.015068493150685,
+      "share": 0.07356369471774805,
+      "cumulative": 0.865184214565276,
+      "class": "A"
+    },
+    {
+      "part": "Torque sensor / encoder",
+      "unit_cost": 480,
+      "lead_days": 21,
+      "annual_qty": 28.5,
+      "annual_value": 13680.0,
+      "reorder_point": 4,
+      "safety_stock": 2.36027397260274,
+      "share": 0.044876314102064364,
+      "cumulative": 0.9100605286673404,
+      "class": "B"
+    },
+    {
+      "part": "Drive belt and coupling",
+      "unit_cost": 160,
+      "lead_days": 10,
+      "annual_qty": 57.0,
+      "annual_value": 9120.0,
+      "reorder_point": 4,
+      "safety_stock": 2.4383561643835616,
+      "share": 0.029917542734709576,
+      "cumulative": 0.93997807140205,
+      "class": "B"
+    },
+    {
+      "part": "Collet",
+      "unit_cost": 120,
+      "lead_days": 14,
+      "annual_qty": 69.0996405108957,
+      "annual_value": 8291.956861307484,
+      "reorder_point": 6,
+      "safety_stock": 3.3496028297190694,
+      "share": 0.02720120326233936,
+      "cumulative": 0.9671792746643894,
+      "class": "B"
+    },
+    {
+      "part": "Coolant and air filters",
+      "unit_cost": 45,
+      "lead_days": 7,
+      "annual_qty": 115.0,
+      "annual_value": 5175.0,
+      "reorder_point": 5,
+      "safety_stock": 2.7945205479452055,
+      "share": 0.016976237242557243,
+      "cumulative": 0.9841555119069466,
+      "class": "C"
+    },
+    {
+      "part": "Temperature sensor",
+      "unit_cost": 210,
+      "lead_days": 14,
+      "annual_qty": 23.0,
+      "annual_value": 4830.0,
+      "reorder_point": 3,
+      "safety_stock": 2.117808219178082,
+      "share": 0.015844488093053426,
+      "cumulative": 1.0,
+      "class": "C"
+    }
+  ],
+  "tool_changes_per_year": 145.2849162011173,
+  "stations": [
+    {
+      "name": "1 Roughing",
+      "cycle_min": 1.0,
+      "p_fail_cycle": 0.09850061355367051,
+      "p_fail": 0.003940024542146821,
+      "torque_range": "47-77 Nm",
+      "cycles_in_data": 2501
+    },
+    {
+      "name": "2 Semi-finish",
+      "cycle_min": 0.9,
+      "p_fail_cycle": 0.012323377920219574,
+      "p_fail": 0.0004929351168087829,
+      "torque_range": "40-47 Nm",
+      "cycles_in_data": 2512
+    },
+    {
+      "name": "3 Finishing",
+      "cycle_min": 0.8,
+      "p_fail_cycle": 0.005008712979715825,
+      "p_fail": 0.00020034851918863302,
+      "torque_range": "33-40 Nm",
+      "cycles_in_data": 2500
+    },
+    {
+      "name": "4 Polishing",
+      "cycle_min": 0.9,
+      "p_fail_cycle": 0.01760419327683878,
+      "p_fail": 0.0007041677310735513,
+      "torque_range": "4-33 Nm",
+      "cycles_in_data": 2487
+    }
+  ],
+  "line_plans": [
+    {
+      "plan": "Run to failure (today)",
+      "parts_per_hour": 38.88125,
+      "sd": 2.5895296990959578,
+      "bottleneck": "1 Roughing",
+      "gain_vs_today": 0.0
+    },
+    {
+      "plan": "Predictive maintenance",
+      "parts_per_hour": 48.98541666666666,
+      "sd": 2.1291554549606957,
+      "bottleneck": "1 Roughing",
+      "gain_vs_today": 0.2598724749504364
+    },
+    {
+      "plan": "+ change tools at 179 min",
+      "parts_per_hour": 51.40625,
+      "sd": 2.342360699344431,
+      "bottleneck": "1 Roughing",
+      "gain_vs_today": 0.32213470503134545
+    },
+    {
+      "plan": "+ larger buffers (5 to 20)",
+      "parts_per_hour": 52.89791666666667,
+      "sd": 1.6190181030660402,
+      "bottleneck": "1 Roughing",
+      "gain_vs_today": 0.36049938380753366
+    },
+    {
+      "plan": "+ standby machine at Roughing",
+      "parts_per_hour": 63.087500000000006,
+      "sd": 0.44633927678392865,
+      "bottleneck": "2 Semi-finish",
+      "gain_vs_today": 0.6225687188554896
+    }
+  ]
+}
