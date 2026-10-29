@@ -16,3 +16,7 @@ __pycache__/
 pdm/outputs/models/
 pdm/data/processed/*.npz
 foreman/models/Random_Forest.joblib
+
+# Report drafts and screenshots stay off GitHub
+report/
+report_screenshots/

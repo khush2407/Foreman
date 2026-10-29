@@ -26,6 +26,9 @@ import pandas as pd
 from scipy.optimize import minimize
 from scipy.special import gamma
 
+# np.trapezoid is numpy 2.x; older numpy (e.g. Anaconda base) only has np.trapz.
+_trapz = getattr(np, "trapezoid", None) or np.trapz
+
 MODES = ["TWF", "HDF", "PWF", "OSF", "RNF"]
 COMPONENT = {
     "TWF": "Cutting tool",
@@ -127,7 +130,7 @@ def age_replacement(beta, eta, cost_planned, cost_failure, grid=None):
     out = []
     for T in grid:
         x = np.linspace(0, T, 400)
-        expected_life = np.trapezoid(R(x, beta, eta), x)
+        expected_life = _trapz(R(x, beta, eta), x)
         F = 1 - R(T, beta, eta)
         out.append((T, (cost_planned * (1 - F) + cost_failure * F) / expected_life, F))
     a = np.array(out)

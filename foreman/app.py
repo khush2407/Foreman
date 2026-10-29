@@ -352,9 +352,10 @@ with tab_batch:
     st.markdown("Upload a CSV of cycles and get a worklist ranked by risk. "
                 "Needs the six sensor columns; the AI4I file works as-is.")
     up = st.file_uploader("CSV", type="csv", label_visibility="collapsed")
+    use_sample = st.toggle("Or use 400 cycles from the AI4I 2020 dataset", key="use_sample")
 
-    if up:
-        bdf = pd.read_csv(up)
+    if up or use_sample:
+        bdf = pd.read_csv(up) if up else pd.read_csv("data/ai4i2020.csv")
         if "Type" in bdf.columns and "Type_encoded" not in bdf.columns:
             bdf["Type_encoded"] = bdf["Type"].map({"L": 0, "M": 1, "H": 2})
 
@@ -431,21 +432,23 @@ with tab_rel:
         st.markdown('<div class="fm-lab">Chance of failure per cycle by tool age</div>',
                     unsafe_allow_html=True)
         by = LIFE["by_age"]
+        # Numeric index (band start) keeps the bars in age order; text labels
+        # like "100-119" would be sorted alphabetically.
         st.bar_chart(pd.DataFrame({"Failure chance (%)": 100 * by["Machine failure"].values},
-                                  index=[f"{a}-{a + 19}" for a in by.index]),
-                     height=260, x_label="Tool age (minutes)", y_label="%")
+                                  index=pd.Index(by.index.astype(int), name="band")),
+                     height=260, x_label="Tool age, start of 20-minute band (minutes)", y_label="%")
 
     st.markdown('<div class="fm-lab" style="margin-top:.6rem">When to change the tool</div>',
                 unsafe_allow_html=True)
     a1, a2 = st.columns([1, 1.6])
     with a1:
         st.slider("Cost of a planned tool change ($)", 100, 5000, 1500, 100, key="rel_cp")
-        st.caption("A failure is priced at $12,000, as in the cost model.")
+        st.caption("A failure is priced at \\$12,000, as in the cost model.")
         rtf = rel.age_replacement(B, E, cp, 12000, grid=np.array([400.0]))
         st.markdown(f"Change at **{ar['T_opt']:.0f} min**: only "
                     f"**{ar['p_fail_opt']:.1%}** of tools fail first, and cost per minute "
-                    f"of tool use drops from **${rtf['cost_opt']:.2f}** (run to failure) "
-                    f"to **${ar['cost_opt']:.2f}**.")
+                    f"of tool use drops from **\\${rtf['cost_opt']:.2f}** (run to failure) "
+                    f"to **\\${ar['cost_opt']:.2f}**.")
         age = st.slider("Check a tool at age (min)", 0, 250, 200, 5, key="rel_age")
         st.markdown(f"Chance it lasts another 10 min: "
                     f"**{rel.conditional_survival(max(age, 1), 10, B, E):.0%}**; "
@@ -469,7 +472,8 @@ with tab_rel:
             f'<div style="font-family:ui-monospace,monospace;font-size:.8rem;margin-top:6px">'
             f'R = {bk["R"]:.3f}</div><div style="font-size:.7rem;opacity:.7">{bk["mode"]}</div></div>')
     st.markdown('<div style="display:flex;align-items:center;gap:8px">'
-                + '<div style="opacity:.6">→</div>'.join(blocks) + '</div>', unsafe_allow_html=True)
+                + '<div style="opacity:.6">→</div>'.join(blocks) + '</div>'
+                + '<div style="height:.8rem"></div>', unsafe_allow_html=True)
     st.markdown(f"Series system: the machine runs only if every block works. "
                 f"**R(system, {mission} cycles) = {bd['R_system']:.3f}**. Weakest block: "
                 f"**{bd['weakest']}**.")
