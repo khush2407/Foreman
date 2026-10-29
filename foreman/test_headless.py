@@ -229,6 +229,8 @@ check("headings become heading rows", h.count('class="fm-wo-h"') == 6,
       h.count('class="fm-wo-h"'))
 check("every line survives", h.count("<div") - 1 == len(wo["text"].splitlines()))
 check("text is escaped", "<b>" not in to_html("Torque <b>x</b>"))
+check("heading with a source code stays a heading",
+      'fm-wo-h">WHAT TO DO [HDF]<' in to_html("WHAT TO DO [HDF]\n1. x"))
 check("Claude-style markdown headings are handled",
       'fm-wo-h">STATUS<' in to_html("**STATUS**\nok") and
       'fm-wo-h">WHY<' in to_html("## WHY:\nok"))

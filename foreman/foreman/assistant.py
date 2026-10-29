@@ -200,8 +200,10 @@ def to_html(text: str) -> str:
         s = ln.strip().replace("**", "")
         if not s:
             out.append('<div class="fm-wo-gap"></div>')
-        elif re.fullmatch(r"#*\s*[A-Z][A-Z /&-]{2,40}:?", s):
-            out.append(f'<div class="fm-wo-h">{html.escape(s.lstrip("# ").rstrip(":"))}</div>')
+        elif re.fullmatch(r"#*\s*[A-Z][A-Z /&-]{2,40}:?(\s*\[[A-Z]{3}\])?", s):
+            # Claude sometimes puts the source code on the heading line,
+            # e.g. "WHAT TO DO [HDF]"; keep it as a heading.
+            out.append(f'<div class="fm-wo-h">{html.escape(s.lstrip("# ").replace(":", ""))}</div>')
         else:
             indent = len(ln) - len(ln.lstrip())
             out.append(f'<div style="padding-left:{indent * .45:.2f}em">'

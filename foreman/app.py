@@ -594,18 +594,21 @@ with tab_dem:
                                   BEST_AGE if change else None, cycles)
     with s2:
         m1, m2, m3, m4 = st.columns(4)
+        df_ = S1["failures"] - S0["failures"]
+        dc_ = S1["predictive_cost"] - S0["predictive_cost"]
         m1.metric("Failures a year", f"{S1['failures']:,.0f}",
-                  f"{S1['failures'] - S0['failures']:+,.0f} vs today", delta_color="inverse")
+                  f"{df_:+,.0f} vs today" if abs(df_) >= 1 else None, delta_color="inverse")
         m2.metric("Caught by the model", f"{S1['recall']:.0%}")
         m3.metric("Cost, run to failure", f"${S1['reactive_cost'] / 1e6:,.2f}M")
         m4.metric("Cost, predictive", f"${S1['predictive_cost'] / 1e6:,.2f}M",
-                  f"{'+' if S1['predictive_cost'] >= S0['predictive_cost'] else '-'}"
-                  f"${abs(S1['predictive_cost'] - S0['predictive_cost']) / 1e6:,.2f}M vs today",
-                  delta_color="inverse")
+                  f"{'+' if dc_ >= 0 else '-'}${abs(dc_) / 1e6:,.2f}M vs today"
+                  if abs(dc_) >= 5000 else None, delta_color="inverse")
         bm = pd.DataFrame({"Today": S0["by_mode"], "This scenario": S1["by_mode"]})
         bm.index = [rel.MODE_LABEL[m] for m in bm.index]
-        st.bar_chart(bm, stack=False, height=250, y_label="Expected failures a year",
-                     color=["#9AA7B0", "#C2571A"])
+        # Horizontal bars keep the mode names readable. In a horizontal
+        # chart x_label names the category axis and y_label the value axis.
+        st.bar_chart(bm, stack=False, horizontal=True, height=260, x_label="",
+                     y_label="Expected failures a year", color=["#9AA7B0", "#C2571A"])
         verdict = plant.drift_verdict(drift)
         worst = drift.loc[drift["psi"].idxmax()]
         (st.error if worst["psi"] >= .25 else st.warning if worst["psi"] >= .1 else st.success)(
@@ -639,7 +642,7 @@ with tab_dem:
 @st.cache_data
 def line_study():
     base = plant.prepare(LIFE["df"])
-    plans, detail = plant.line_plans(base, LIFE["beta"], LIFE["eta"], reps=4)
+    plans, detail = plant.line_plans(base, LIFE["beta"], LIFE["eta"], reps=6)
     stations = plant.station_profiles(base, LIFE["beta"], LIFE["eta"])
     stations_tc = plant.station_profiles(base, LIFE["beta"], LIFE["eta"], change_age=BEST_AGE)
     return plans, detail["Run to failure (today)"]["stats"], stations, stations_tc
@@ -651,7 +654,7 @@ def line_custom(predictive, tool_change, buffer, standby, repair):
     return plant.simulate_line(stations_tc if tool_change else stations, buffer=buffer,
                                recall=0.912 if predictive else 0.0,
                                false_alarm=(73 / 2000) / plant.PARTS_PER_RUN if predictive else 0.0,
-                               standby=standby, repair_unplanned=repair, reps=4)
+                               standby=standby, repair_unplanned=repair, reps=6)
 
 
 with tab_line:
@@ -675,8 +678,8 @@ with tab_line:
     with t2:
         st.markdown('<div class="fm-lab">Where time goes today</div>', unsafe_allow_html=True)
         ut = stats0.set_index("station")[["busy", "down", "starved", "blocked"]] * 100
-        ut.columns = ["Working", "Down for repair", "Starved (no input)", "Blocked (buffer full)"]
-        st.bar_chart(ut, horizontal=True, height=250, x_label="Share of time (%)",
+        ut.columns = ["Working", "Down", "Starved", "Blocked"]
+        st.bar_chart(ut, horizontal=True, height=250, x_label="", y_label="Share of time (%)",
                      color=["#0E7C7B", "#C2571A", "#C9D2D8", "#D99A2B"])
 
     st.markdown('<div class="fm-lab" style="margin-top:.6rem">Backup plans, each added on '
@@ -686,10 +689,11 @@ with tab_line:
     st.dataframe(pv[["Plan", "Parts per hour", "vs today", "Bottleneck"]]
                  .style.format({"Parts per hour": "{:.1f}", "vs today": "{:+.0%}"}),
                  width="stretch", hide_index=True)
-    st.caption("A standby machine at the bottleneck gives the largest gain, and the "
-               "bottleneck then moves to the next station: that is where the next backup "
-               "plan should go. Each recorded cycle is treated as a run of 25 parts; "
-               "the layout, cycle times and repair times are assumptions.")
+    st.caption(f"A standby machine at the bottleneck gives the largest gain, and the "
+               f"bottleneck then moves to {plans['bottleneck'].iloc[-1]}: that is where the "
+               "next backup plan should go. Starved = waiting for parts from upstream; "
+               "blocked = the buffer downstream is full. Each recorded cycle is treated as "
+               "a run of 25 parts; the layout, cycle times and repair times are assumptions.")
 
     st.markdown('<div class="fm-lab" style="margin-top:.6rem">Try your own plan</div>',
                 unsafe_allow_html=True)
